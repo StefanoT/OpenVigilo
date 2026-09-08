@@ -42,7 +42,7 @@ public sealed class ReclassificationTests
     [Fact]
     public void Apply_for_due_today_keeps_today_and_overdue_deadlines_and_replaces_future_ones()
     {
-        var currentDeadline = new DateTimeOffset(Now.LocalDateTime.Date.AddHours(9), Now.Offset);
+        var currentDeadline = new DateTimeOffset(Now.Date.AddHours(9), Now.Offset);
         var kept = NeedsReviewItem();
         kept.Deadline = currentDeadline;
         TrackedItemReclassification.Apply(kept, TrackedItemCategories.DueToday, Now);
@@ -57,14 +57,14 @@ public sealed class ReclassificationTests
         var future = NeedsReviewItem();
         future.Deadline = Now.AddDays(4);
         TrackedItemReclassification.Apply(future, TrackedItemCategories.DueToday, Now);
-        Assert.Equal(Now.LocalDateTime.Date, future.Deadline!.Value.LocalDateTime.Date);
+        Assert.Equal(Now.Date, future.Deadline!.Value.ToOffset(Now.Offset).Date);
         Assert.True(future.Deadline.Value > Now);
     }
 
     [Fact]
     public void Apply_for_upcoming_keeps_future_and_undated_deadlines_and_moves_stale_ones()
     {
-        var future = new DateTimeOffset(Now.LocalDateTime.Date.AddDays(9), Now.Offset);
+        var future = new DateTimeOffset(Now.Date.AddDays(9), Now.Offset);
         var kept = NeedsReviewItem();
         kept.Deadline = future;
         TrackedItemReclassification.Apply(kept, TrackedItemCategories.Upcoming, Now);
@@ -78,8 +78,32 @@ public sealed class ReclassificationTests
         var moved = NeedsReviewItem();
         moved.Deadline = Now.AddDays(-1);
         TrackedItemReclassification.Apply(moved, TrackedItemCategories.Upcoming, Now);
-        Assert.Equal(Now.LocalDateTime.Date.AddDays(1), moved.Deadline!.Value.LocalDateTime.Date);
+        Assert.Equal(Now.Date.AddDays(1), moved.Deadline!.Value.ToOffset(Now.Offset).Date);
         Assert.Equal(TrackedItemCategories.Upcoming, TrackedItemCategories.Classify(moved, Now));
+    }
+
+    [Fact]
+    public void Apply_computes_days_in_now_offset_rather_than_the_machine_timezone()
+    {
+        // Reproduces the CI failure mode: now carries an offset that differs from the
+        // machine's UTC offset, so any LocalDateTime re-basing or Kind=Local constructor
+        // input throws or shifts the day. The chosen offset is guaranteed to differ from
+        // whatever timezone the test machine happens to run in.
+        var machineOffset = DateTimeOffset.Now.Offset;
+        var offset = machineOffset == TimeSpan.FromHours(2) ? TimeSpan.FromHours(9) : TimeSpan.FromHours(2);
+        var now = new DateTimeOffset(2026, 9, 5, 23, 30, 0, offset);
+
+        var future = NeedsReviewItem();
+        future.Deadline = now.AddDays(4);
+        TrackedItemReclassification.Apply(future, TrackedItemCategories.DueToday, now);
+        Assert.Equal(now.Date, future.Deadline!.Value.ToOffset(offset).Date);
+        Assert.Equal(TrackedItemCategories.DueToday, TrackedItemCategories.Classify(future, now));
+
+        var stale = NeedsReviewItem();
+        stale.Deadline = now.AddDays(-1);
+        TrackedItemReclassification.Apply(stale, TrackedItemCategories.Upcoming, now);
+        Assert.Equal(now.Date.AddDays(1), stale.Deadline!.Value.ToOffset(offset).Date);
+        Assert.Equal(TrackedItemCategories.Upcoming, TrackedItemCategories.Classify(stale, now));
     }
 
     [Fact]

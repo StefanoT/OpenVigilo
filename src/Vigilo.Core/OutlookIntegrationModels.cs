@@ -43,7 +43,10 @@ public static class TrackedItemCategories
 
     public static string Classify(TrackedItem item, DateTimeOffset now)
     {
-        var today = now.LocalDateTime.Date;
+        // Day boundaries are evaluated in the offset carried by now, never the machine
+        // timezone: LocalDateTime would silently re-base dates to the machine and makes the
+        // DateTimeOffset constructor reject the mismatch when the two differ (CI, schedulers).
+        var today = now.Date;
         if (item.Status == TrackedItemStatus.Done) return Done;
         if (item.Status == TrackedItemStatus.Dismissed) return Dismissed;
 
@@ -62,7 +65,7 @@ public static class TrackedItemCategories
         // Overdue deadlines stay urgent: anything due today or earlier is Due today, and the
         // expiration highlight distinguishes the overdue rows. Escalation is a row badge and a
         // summary metric, never a section; it must not hide a deadline.
-        if (item.Deadline is { } deadline && deadline.LocalDateTime.Date <= today) return DueToday;
+        if (item.Deadline is { } deadline && deadline.ToOffset(now.Offset).Date <= today) return DueToday;
         return item.Status == TrackedItemStatus.Snoozed ? Snoozed : Upcoming;
     }
 
@@ -96,7 +99,7 @@ public static class TrackedItemReclassification
             throw new ArgumentOutOfRangeException(nameof(section), section, "Not a re-classification target section.");
         }
 
-        var today = now.LocalDateTime.Date;
+        var today = now.Date;
         item.Status = TrackedItemStatus.Open;
         item.SectionOverride = section;
         item.CompletedAt = null;
@@ -107,14 +110,14 @@ public static class TrackedItemReclassification
             case TrackedItemCategories.DueToday:
                 // Overdue deadlines are already Due today material and keep their date so the
                 // row stays expiration-highlighted.
-                item.Deadline = item.Deadline is { } todayDeadline && todayDeadline.LocalDateTime.Date <= today
+                item.Deadline = item.Deadline is { } todayDeadline && todayDeadline.ToOffset(now.Offset).Date <= today
                     ? item.Deadline
                     : EndOfDay(today, now);
                 break;
             case TrackedItemCategories.Upcoming:
                 // Upcoming holds every non-urgent active item, dated or not; only a deadline
                 // that would keep the item in Due today is moved, one day past the boundary.
-                if (item.Deadline is { } staleDeadline && staleDeadline.LocalDateTime.Date <= today)
+                if (item.Deadline is { } staleDeadline && staleDeadline.ToOffset(now.Offset).Date <= today)
                 {
                     item.Deadline = EndOfDay(today.AddDays(1), now);
                 }
