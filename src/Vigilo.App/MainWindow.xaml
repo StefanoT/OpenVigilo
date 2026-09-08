@@ -1,0 +1,699 @@
+<Window x:Class="Vigilo.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:Vigilo.App.Converters"
+        xmlns:core="clr-namespace:Vigilo.Core;assembly=Vigilo.Core"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Vigilo"
+        Height="760"
+        Width="1180"
+        MinHeight="660"
+        MinWidth="1040"
+        Background="#EEF2F7"
+        FontFamily="Segoe UI Variable, Segoe UI"
+        TextElement.Foreground="#111827"
+        Icon="/Vigilo.App;component/Assets/AppIcon.ico"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True">
+    <Window.Resources>
+        <SolidColorBrush x:Key="WindowSurface" Color="#EEF2F7" />
+        <SolidColorBrush x:Key="PanelSurface" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="PanelSurfaceAlt" Color="#F8FAFC" />
+        <SolidColorBrush x:Key="Ink" Color="#111827" />
+        <SolidColorBrush x:Key="MutedInk" Color="#64748B" />
+        <SolidColorBrush x:Key="SoftInk" Color="#94A3B8" />
+        <SolidColorBrush x:Key="BorderSoft" Color="#D9E2EC" />
+        <SolidColorBrush x:Key="BorderStrong" Color="#C7D2DF" />
+        <SolidColorBrush x:Key="Accent" Color="#0F766E" />
+        <SolidColorBrush x:Key="AccentSoft" Color="#E6F5F3" />
+        <SolidColorBrush x:Key="Danger" Color="#B42318" />
+        <SolidColorBrush x:Key="DangerSoft" Color="#FDECEC" />
+        <SolidColorBrush x:Key="ExpiredRowBackground" Color="#FECACA" />
+        <SolidColorBrush x:Key="NearExpirationRowBackground" Color="#FEF3C7" />
+        <SolidColorBrush x:Key="HeaderInk" Color="#0B1220" />
+        <converters:DeadlineHumanizeConverter x:Key="DeadlineHumanizeConverter" />
+        <converters:EmailDateTimeHumanizeConverter x:Key="EmailDateTimeHumanizeConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+        <DropShadowEffect x:Key="PanelShadow"
+                          BlurRadius="22"
+                          Direction="270"
+                          Opacity="0.10"
+                          ShadowDepth="8"
+                          Color="#334155" />
+
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+            <Setter Property="LineHeight" Value="18" />
+        </Style>
+
+        <Style x:Key="CaptionText" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="{StaticResource MutedInk}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style x:Key="MetricCard" TargetType="{x:Type Border}">
+            <Setter Property="Background" Value="{StaticResource PanelSurface}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSoft}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="16,14" />
+            <Setter Property="Margin" Value="0,0,10,0" />
+            <Setter Property="Effect" Value="{StaticResource PanelShadow}" />
+        </Style>
+
+        <Style x:Key="MetricValue" TargetType="{x:Type TextBlock}">
+            <Setter Property="FontSize" Value="30" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource HeaderInk}" />
+            <Setter Property="LineHeight" Value="34" />
+            <Setter Property="Margin" Value="0,7,0,0" />
+        </Style>
+
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#FFFFFF" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderStrong}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Foreground" Value="{StaticResource HeaderInk}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="MinWidth" Value="78" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="Margin" Value="6,0,0,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="Chrome"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="7"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="#F8FAFC" />
+                                <Setter TargetName="Chrome" Property="BorderBrush" Value="#AAB8C7" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Chrome" Property="Background" Value="#EDF2F7" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.48" />
+                                <Setter Property="Cursor" Value="Arrow" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Margin" Value="0,0,0,11" />
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSoft}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Background" Value="#FFFFFF" />
+            <Setter Property="Foreground" Value="{StaticResource HeaderInk}" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="Field"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="7">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Field" Property="BorderBrush" Value="{StaticResource Accent}" />
+                                <Setter TargetName="Field" Property="Background" Value="#FFFFFF" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.55" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="Background" Value="#F8FAFC" />
+            <Setter Property="Foreground" Value="{StaticResource MutedInk}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Padding" Value="12,9" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSoft}" />
+            <Setter Property="BorderThickness" Value="0,0,1,1" />
+        </Style>
+
+        <Style TargetType="{x:Type ListViewItem}">
+            <Setter Property="MinHeight" Value="42" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="BorderBrush" Value="#EEF2F7" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                        <Border x:Name="Row"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <GridViewRowPresenter Content="{TemplateBinding Content}"
+                                                  Columns="{Binding Path=View.Columns, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Row" Property="Background" Value="#F8FAFC" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Row" Property="Background" Value="{StaticResource AccentSoft}" />
+                                <Setter Property="Foreground" Value="{StaticResource HeaderInk}" />
+                            </Trigger>
+                            <DataTrigger Binding="{Binding ExpirationState}"
+                                         Value="{x:Static core:TrackedItemExpirationState.NearExpiration}">
+                                <Setter TargetName="Row" Property="Background" Value="{StaticResource NearExpirationRowBackground}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ExpirationState}"
+                                         Value="{x:Static core:TrackedItemExpirationState.Expired}">
+                                <Setter TargetName="Row" Property="Background" Value="{StaticResource ExpiredRowBackground}" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0"
+                Background="{StaticResource PanelSurface}"
+                BorderBrush="{StaticResource BorderSoft}"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="18"
+                Effect="{StaticResource PanelShadow}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Image Width="84"
+                       Height="84"
+                       Source="Assets/AppIcon.png"
+                       Stretch="Uniform"
+                       RenderOptions.BitmapScalingMode="HighQuality"
+                       VerticalAlignment="Center" />
+
+                <StackPanel Grid.Column="1"
+                            Margin="14,0,0,0"
+                            VerticalAlignment="Center">
+                    <TextBlock Text="Vigilo"
+                               FontSize="24"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource HeaderInk}"
+                               LineHeight="28" />
+                    <TextBlock FontSize="12"
+                               FontWeight="Medium"
+                               Foreground="{StaticResource SoftInk}"
+                               LineHeight="16"
+                               Margin="1,4,0,0"
+                               TextOptions.TextFormattingMode="Display"
+                               TextOptions.TextRenderingMode="ClearType">
+                        <Run Text="Created by Stefano Tommesani" />
+                        <Run Text="  ·  " />
+                        <Hyperlink NavigateUri="https://www.tommesani.com"
+                                   RequestNavigate="CreatorWebsite_RequestNavigate"
+                                   Foreground="{StaticResource Accent}"
+                                   TextDecorations="{x:Null}"
+                                   ToolTip="Open www.tommesani.com in your browser">
+                            <Run Text="www.tommesani.com" />
+                        </Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+
+                <Button Grid.Column="2"
+                        Content="Settings"
+                        Click="OpenSettings_Click"
+                        MinWidth="96"
+                        VerticalAlignment="Center"
+                        AutomationProperties.Name="Open settings"
+                        AutomationProperties.HelpText="Open email, monitoring, and local AI settings" />
+
+            </Grid>
+        </Border>
+
+        <UniformGrid Grid.Row="1"
+                     Rows="1"
+                     Margin="0,18,0,16">
+            <UniformGrid.Columns>6</UniformGrid.Columns>
+            <Border Style="{StaticResource MetricCard}"
+                    Tag="Due today"
+                    Cursor="Hand"
+                    ToolTip="Show the Due today section"
+                    MouseLeftButtonUp="SummaryMetric_Click">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Due today" Style="{StaticResource CaptionText}" />
+                    <TextBlock Grid.Row="1" Text="{Binding Report.DueTodayCount}" Style="{StaticResource MetricValue}" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource MetricCard}"
+                    Tag="Waiting for my reply"
+                    Cursor="Hand"
+                    ToolTip="Show the Waiting for my reply section"
+                    MouseLeftButtonUp="SummaryMetric_Click">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Waiting reply" Style="{StaticResource CaptionText}" />
+                    <TextBlock Grid.Row="1" Text="{Binding Report.WaitingReplyCount}" Style="{StaticResource MetricValue}" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource MetricCard}"
+                    Tag="Needs review"
+                    Cursor="Hand"
+                    ToolTip="Show the Needs review section"
+                    MouseLeftButtonUp="SummaryMetric_Click">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Needs review" Style="{StaticResource CaptionText}" />
+                    <TextBlock Grid.Row="1" Text="{Binding Report.NeedsReviewCount}" Style="{StaticResource MetricValue}" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource MetricCard}"
+                    Tag="Upcoming"
+                    Cursor="Hand"
+                    ToolTip="Show the Upcoming section"
+                    MouseLeftButtonUp="SummaryMetric_Click">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Upcoming" Style="{StaticResource CaptionText}" />
+                    <TextBlock Grid.Row="1" Text="{Binding Report.UpcomingCount}" Style="{StaticResource MetricValue}" />
+                </Grid>
+            </Border>
+            <Border Tag="Commercial offers"
+                    Cursor="Hand"
+                    ToolTip="Show the Commercial offers section"
+                    MouseLeftButtonUp="SummaryMetric_Click">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}" BasedOn="{StaticResource MetricCard}">
+                        <Setter Property="Margin" Value="0" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsScanInProgress}" Value="True">
+                                <Setter Property="Margin" Value="0,0,10,0" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Commercial offers" Style="{StaticResource CaptionText}" />
+                    <TextBlock Grid.Row="1" Text="{Binding Report.CommercialOfferCount}" Style="{StaticResource MetricValue}" />
+                </Grid>
+            </Border>
+            <Border Style="{StaticResource MetricCard}"
+                    Margin="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Processed" Style="{StaticResource CaptionText}" />
+                    <TextBlock Grid.Row="1"
+                               Text="{Binding Report.ProcessedMessageCount, StringFormat={}{0:N0}}"
+                               Style="{StaticResource MetricValue}" />
+                </Grid>
+            </Border>
+        </UniformGrid>
+
+        <Border Grid.Row="2"
+                Background="{StaticResource PanelSurface}"
+                BorderBrush="{StaticResource BorderSoft}"
+                BorderThickness="1"
+                CornerRadius="8"
+                ClipToBounds="True"
+                Effect="{StaticResource PanelShadow}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Margin="16,14,16,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Tracked messages"
+                                   FontSize="15"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource HeaderInk}"
+                                   LineHeight="20" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center">
+                        <Button Content="Columns &#x25BE;"
+                                Click="TrackedMessageColumns_Click"
+                                MinWidth="84"
+                                MinHeight="28"
+                                Padding="10,4"
+                                Margin="0,0,12,0"
+                                AutomationProperties.Name="Choose tracked message columns"
+                                AutomationProperties.HelpText="Show or hide columns in the tracked messages table">
+                            <Button.ContextMenu>
+                                <ContextMenu StaysOpen="True">
+                                    <MenuItem Header="Action needed" Tag="Action needed" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" Click="TrackedMessageColumn_Click" />
+                                    <MenuItem Header="Reason" Tag="Reason" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" Click="TrackedMessageColumn_Click" />
+                                    <MenuItem Header="Sender" Tag="Sender" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" Click="TrackedMessageColumn_Click" />
+                                    <MenuItem Header="Subject" Tag="Subject" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" Click="TrackedMessageColumn_Click" />
+                                    <MenuItem Header="Received / sent" Tag="Received / sent" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" Click="TrackedMessageColumn_Click" />
+                                    <MenuItem Header="Deadline" Tag="Deadline" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" Click="TrackedMessageColumn_Click" />
+                                    <MenuItem Header="Reply sent" Tag="Reply sent" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" Click="TrackedMessageColumn_Click" />
+                                    <MenuItem Header="Account" Tag="Account" IsCheckable="True" IsChecked="True" StaysOpenOnClick="True" Click="TrackedMessageColumn_Click" />
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel.Style>
+                                <Style TargetType="{x:Type StackPanel}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedItem, ElementName=TrackedMessagesListView}"
+                                                     Value="{x:Null}">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <Button Content="Open"
+                                Command="{Binding OpenEmailCommand}"
+                                CommandParameter="{Binding SelectedItem, ElementName=TrackedMessagesListView}"
+                                MinWidth="54"
+                                MinHeight="28"
+                                Padding="10,4"
+                                Margin="0,0,6,0" />
+                            <Button Content="Done"
+                                Command="{Binding DoneCommand}"
+                                CommandParameter="{Binding SelectedItem, ElementName=TrackedMessagesListView}"
+                                MinWidth="54"
+                                MinHeight="28"
+                                Padding="10,4"
+                                Margin="0,0,6,0" />
+                            <Button Content="Dismiss"
+                                Command="{Binding DismissCommand}"
+                                CommandParameter="{Binding SelectedItem, ElementName=TrackedMessagesListView}"
+                                MinWidth="68"
+                                MinHeight="28"
+                                Padding="10,4"
+                                Margin="0,0,6,0" />
+                            <Button Content="Snooze"
+                                Command="{Binding SnoozeCommand}"
+                                CommandParameter="{Binding SelectedItem, ElementName=TrackedMessagesListView}"
+                                MinWidth="64"
+                                MinHeight="28"
+                                Padding="10,4"
+                                    Margin="0" />
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+
+                <ListView x:Name="TrackedMessagesListView"
+                          Grid.Row="1"
+                          ItemsSource="{Binding ItemsView}"
+                          Background="{StaticResource PanelSurface}"
+                          BorderThickness="0"
+                          KeyDown="TrackedMessagesListView_KeyDown"
+                          MouseDoubleClick="TrackedMessagesListView_MouseDoubleClick"
+                          ContextMenuOpening="TrackedMessagesListView_ContextMenuOpening"
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListView.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Open"
+                                      Command="{Binding PlacementTarget.DataContext.OpenEmailCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                      CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                            <Separator />
+                            <MenuItem Header="Done"
+                                      Command="{Binding PlacementTarget.DataContext.DoneCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                      CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                            <MenuItem Header="Dismiss"
+                                      Command="{Binding PlacementTarget.DataContext.DismissCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                      CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                            <MenuItem Header="Snooze"
+                                      Command="{Binding PlacementTarget.DataContext.SnoozeCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                      CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                            <MenuItem Header="Re-classify" Tag="Reclassify">
+                                <MenuItem Header="Due today"
+                                          Command="{Binding PlacementTarget.DataContext.ReclassifyToDueTodayCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                          CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                <MenuItem Header="Upcoming"
+                                          Command="{Binding PlacementTarget.DataContext.ReclassifyToUpcomingCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                          CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                <MenuItem Header="Waiting for my reply"
+                                          Command="{Binding PlacementTarget.DataContext.ReclassifyToWaitingReplyCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                          CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                                <MenuItem Header="Commercial offers"
+                                          Command="{Binding PlacementTarget.DataContext.ReclassifyToCommercialOfferCommand, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                          CommandParameter="{Binding PlacementTarget.SelectedItem, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}" />
+                            </MenuItem>
+                        </ContextMenu>
+                    </ListView.ContextMenu>
+                    <ListView.GroupStyle>
+                        <GroupStyle>
+                            <GroupStyle.ContainerStyle>
+                                <Style TargetType="{x:Type GroupItem}">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type GroupItem}">
+                                                <Expander HorizontalContentAlignment="Stretch"
+                                                          Header="{Binding Name}"
+                                                          Tag="{Binding Name}"
+                                                          AutomationProperties.Name="{Binding Name}"
+                                                          ToolTip="Click to show or hide this section"
+                                                          Loaded="TrackedMessageSectionExpander_Loaded"
+                                                          Expanded="TrackedMessageSectionExpander_ExpansionChanged"
+                                                          Collapsed="TrackedMessageSectionExpander_ExpansionChanged">
+                                                    <Expander.Template>
+                                                        <ControlTemplate TargetType="{x:Type Expander}">
+                                                            <DockPanel>
+                                                                <ToggleButton x:Name="HeaderToggle"
+                                                                              DockPanel.Dock="Top"
+                                                                              IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                                                              HorizontalContentAlignment="Stretch"
+                                                                              Cursor="Hand">
+                                                                    <ToggleButton.Template>
+                                                                        <ControlTemplate TargetType="{x:Type ToggleButton}">
+                                                                            <Border x:Name="HeaderBar"
+                                                                                    Background="#F1F5F9"
+                                                                                    BorderBrush="{StaticResource BorderSoft}"
+                                                                                    BorderThickness="0,1,0,1"
+                                                                                    Padding="12,8">
+                                                                                <Grid>
+                                                                                    <Grid.ColumnDefinitions>
+                                                                                        <ColumnDefinition Width="Auto" />
+                                                                                        <ColumnDefinition Width="*" />
+                                                                                    </Grid.ColumnDefinitions>
+                                                                                    <Path x:Name="Chevron"
+                                                                                          Width="8"
+                                                                                          Height="5"
+                                                                                          Margin="0,0,10,0"
+                                                                                          VerticalAlignment="Center"
+                                                                                          Data="M 0 0 L 4 4 L 8 0"
+                                                                                          Stroke="{StaticResource MutedInk}"
+                                                                                          StrokeThickness="1.5"
+                                                                                          StrokeStartLineCap="Round"
+                                                                                          StrokeEndLineCap="Round"
+                                                                                          RenderTransformOrigin="0.5,0.5">
+                                                                                        <Path.RenderTransform>
+                                                                                            <RotateTransform Angle="-90" />
+                                                                                        </Path.RenderTransform>
+                                                                                    </Path>
+                                                                                    <ContentPresenter Grid.Column="1"
+                                                                                                      Content="{TemplateBinding Content}"
+                                                                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                                                      VerticalAlignment="Center" />
+                                                                                </Grid>
+                                                                            </Border>
+                                                                            <ControlTemplate.Triggers>
+                                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                                    <Setter TargetName="HeaderBar" Property="Background" Value="#E8EEF5" />
+                                                                                </Trigger>
+                                                                                <Trigger Property="IsChecked" Value="True">
+                                                                                    <Setter TargetName="Chevron" Property="RenderTransform">
+                                                                                        <Setter.Value>
+                                                                                            <RotateTransform Angle="0" />
+                                                                                        </Setter.Value>
+                                                                                    </Setter>
+                                                                                </Trigger>
+                                                                            </ControlTemplate.Triggers>
+                                                                        </ControlTemplate>
+                                                                    </ToggleButton.Template>
+                                                                    <TextBlock Text="{TemplateBinding Header}"
+                                                                               Foreground="{StaticResource HeaderInk}"
+                                                                               FontSize="12"
+                                                                               FontWeight="SemiBold" />
+                                                                </ToggleButton>
+                                                                <ContentPresenter x:Name="ExpandedContent"
+                                                                                  Content="{TemplateBinding Content}"
+                                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                                  HorizontalAlignment="Stretch"
+                                                                                  Visibility="Collapsed" />
+                                                            </DockPanel>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsExpanded" Value="True">
+                                                                    <Setter TargetName="ExpandedContent" Property="Visibility" Value="Visible" />
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Expander.Template>
+                                                    <ItemsPresenter />
+                                                </Expander>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.ContainerStyle>
+                        </GroupStyle>
+                    </ListView.GroupStyle>
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Action needed" Width="210">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding ActionSummary}"
+                                                       TextWrapping="Wrap"
+                                                       TextTrimming="None" />
+                                            <Border CornerRadius="3"
+                                                    Background="{StaticResource DangerSoft}"
+                                                    Padding="5,1"
+                                                    Margin="0,4,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    Visibility="{Binding IsEscalation, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                <TextBlock Text="Possible escalation"
+                                                           FontSize="11"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="{StaticResource Danger}" />
+                                            </Border>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Reason" Width="260">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Reason}"
+                                                   TextWrapping="Wrap"
+                                                   TextTrimming="None" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Sender" Width="150" DisplayMemberBinding="{Binding Sender}" />
+                            <GridViewColumn Header="Subject" Width="230">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Subject}"
+                                                   TextWrapping="Wrap"
+                                                   TextTrimming="None" />
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Received / sent" Width="142"
+                                            DisplayMemberBinding="{Binding ReceivedAt, Converter={StaticResource EmailDateTimeHumanizeConverter}}" />
+                            <GridViewColumn Header="Deadline" Width="132"
+                                            DisplayMemberBinding="{Binding Deadline, Converter={StaticResource DeadlineHumanizeConverter}}" />
+                            <GridViewColumn Header="Reply sent" Width="132" DisplayMemberBinding="{Binding SentReplyDetectedAt}" />
+                            <GridViewColumn Header="Account" Width="150" DisplayMemberBinding="{Binding AccountDisplayName}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+        </Border>
+
+        <Expander Header="Logs"
+                  IsExpanded="False"
+                  Background="{StaticResource PanelSurface}"
+                  BorderBrush="{StaticResource BorderSoft}"
+                  BorderThickness="1"
+                  Padding="12">
+            <Expander.Style>
+                <Style TargetType="{x:Type Expander}">
+                    <Setter Property="Grid.Row" Value="3" />
+                    <Setter Property="Grid.RowSpan" Value="1" />
+                    <Setter Property="Panel.ZIndex" Value="0" />
+                    <Setter Property="Margin" Value="0,16,0,0" />
+                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                    <Style.Triggers>
+                        <Trigger Property="IsExpanded" Value="True">
+                            <Setter Property="Grid.Row" Value="2" />
+                            <Setter Property="Grid.RowSpan" Value="2" />
+                            <Setter Property="Panel.ZIndex" Value="20" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Expander.Style>
+            <TextBox Text="{Binding LogText, Mode=OneWay}"
+                     TextChanged="LogTextBox_TextChanged"
+                     Height="Auto"
+                     MinHeight="240"
+                     Margin="2,12,2,2"
+                     Padding="10"
+                     FontFamily="Cascadia Mono, Consolas"
+                     FontSize="11"
+                     IsReadOnly="True"
+                     AcceptsReturn="True"
+                     TextWrapping="NoWrap"
+                     VerticalContentAlignment="Top"
+                     VerticalScrollBarVisibility="Auto"
+                     HorizontalScrollBarVisibility="Auto" />
+        </Expander>
+
+    </Grid>
+</Window>

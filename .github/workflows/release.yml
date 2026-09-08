@@ -1,0 +1,152 @@
+name: Publish release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build Windows x64 release
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.metadata.outputs.version }}
+      sbom: ${{ steps.metadata.outputs.sbom }}
+
+    env:
+      Solution_Name: Vigilo.sln
+      Test_Project_Path: src\Vigilo.Tests\Vigilo.Tests.csproj
+      Runtime: win-x64
+
+    steps:
+    - name: Checkout tagged commit
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        ref: ${{ github.ref }}
+
+    - name: Install .NET 10
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Validate release tag and derive version
+      id: metadata
+      shell: pwsh
+      run: |
+        $tag = "${{ github.ref_name }}"
+        if ($tag -notmatch '^v(?<version>\d+\.\d+\.\d+)$') {
+          throw "Release tag '$tag' must use the format v0.0.0."
+        }
+
+        "version=$($Matches.version)" >> $env:GITHUB_OUTPUT
+        "sbom=Vigilo-$($Matches.version)-$env:Runtime.cdx.json" >> $env:GITHUB_OUTPUT
+
+    - name: Restore locked application dependencies
+      shell: pwsh
+      run: |
+        dotnet restore $env:Solution_Name --locked-mode
+
+    - name: Build solution
+      run: >
+        dotnet build $env:Solution_Name
+        --configuration Release
+        --no-restore
+        -p:Version=${{ steps.metadata.outputs.version }}
+        -p:ContinuousIntegrationBuild=true
+
+    - name: Run automated tests
+      run: >
+        dotnet test $env:Test_Project_Path
+        --configuration Release
+        --no-build
+        --verbosity normal
+
+    - name: Build installer, portable archive, checksums, and SBOM
+      shell: pwsh
+      run: |
+        .\build\package.ps1 -Tag "${{ github.ref_name }}" -Configuration Release -Runtime $env:Runtime
+
+    - name: Upload release diagnostics
+      uses: actions/upload-artifact@v4
+      with:
+        name: Vigilo-${{ github.ref_name }}-win-x64
+        path: |
+          artifacts/Vigilo-Setup-${{ steps.metadata.outputs.version }}-x64.exe
+          artifacts/Vigilo-Portable-${{ steps.metadata.outputs.version }}-x64.zip
+          artifacts/SHA256SUMS.txt
+          artifacts/${{ steps.metadata.outputs.sbom }}
+        if-no-files-found: error
+
+  publish:
+    name: Publish GitHub release assets
+    needs: build
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+
+    steps:
+    - name: Download release artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: Vigilo-${{ github.ref_name }}-win-x64
+        path: artifacts
+
+    - name: Verify final checksums
+      shell: pwsh
+      run: |
+        Push-Location artifacts
+        try {
+          function Get-Sha256Hex([string]$Path) {
+            $resolvedPath = (Resolve-Path -LiteralPath $Path).Path
+            $stream = [System.IO.File]::OpenRead($resolvedPath)
+            $sha256 = [System.Security.Cryptography.SHA256]::Create()
+            try {
+              return -join ($sha256.ComputeHash($stream) | ForEach-Object { $_.ToString("x2") })
+            } finally {
+              $sha256.Dispose()
+              $stream.Dispose()
+            }
+          }
+
+          foreach ($line in Get-Content SHA256SUMS.txt) {
+            if ($line -notmatch '^(?<hash>[0-9a-f]{64})  (?<name>.+)$') {
+              throw "Invalid checksum line: $line"
+            }
+            $actual = Get-Sha256Hex $Matches.name
+            if ($actual -ne $Matches.hash) {
+              throw "Checksum mismatch for $($Matches.name)."
+            }
+          }
+        } finally {
+          Pop-Location
+        }
+
+    - name: Attest release SBOM
+      if: ${{ github.event.repository.private == false }}
+      uses: actions/attest@v4
+      with:
+        subject-path: |
+          artifacts/Vigilo-Setup-${{ needs.build.outputs.version }}-x64.exe
+          artifacts/Vigilo-Portable-${{ needs.build.outputs.version }}-x64.zip
+        sbom-path: artifacts/${{ needs.build.outputs.sbom }}
+
+    - name: Create GitHub Release
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh release create "${{ github.ref_name }}" `
+          "artifacts\Vigilo-Setup-${{ needs.build.outputs.version }}-x64.exe" `
+          "artifacts\Vigilo-Portable-${{ needs.build.outputs.version }}-x64.zip" `
+          "artifacts\SHA256SUMS.txt" `
+          "artifacts\${{ needs.build.outputs.sbom }}" `
+          --repo "${{ github.repository }}" `
+          --verify-tag `
+          --generate-notes `
+          --title "Vigilo ${{ github.ref_name }}"

@@ -1,0 +1,18 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
+  <Bundle Name="Vigilo"
+          Manufacturer="Vigilo"
+          Version="$(var.Version)"
+          UpgradeCode="AC13736A-7D48-46F8-B32E-96D6D9BC7CB5"
+          Compressed="yes"
+          IconSourceFile="$(sys.SOURCEFILEDIR)..\..\src\Vigilo.App\Assets\AppIcon.ico">
+    <BootstrapperApplication>
+      <bal:WixInternalUIBootstrapperApplication />
+    </BootstrapperApplication>
+    <Chain>
+      <MsiPackage SourceFile="$(var.MsiPath)"
+                  Visible="no"
+                  Vital="yes" />
+    </Chain>
+  </Bundle>
+</Wix>

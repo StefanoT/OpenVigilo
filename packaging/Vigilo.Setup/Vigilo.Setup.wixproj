@@ -1,0 +1,19 @@
+<Project Sdk="WixToolset.Sdk/5.0.2">
+  <PropertyGroup>
+    <OutputType>Bundle</OutputType>
+    <Platform>x64</Platform>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <OutputName>Vigilo-Setup</OutputName>
+    <MsiPath Condition="'$(MsiPath)' == ''">$(MSBuildThisFileDirectory)..\Vigilo.Package\bin\x64\Release\Vigilo.msi</MsiPath>
+    <Version Condition="'$(Version)' == ''">0.0.0</Version>
+    <DefineConstants>Version=$(Version);MsiPath=$(MsiPath)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.BootstrapperApplications.wixext" Version="5.0.2" />
+  </ItemGroup>
+
+  <!-- Work around the VS 17.13 component-discovery regression affecting
+       WiX 5 bootstrapper extension resolution (wixtoolset/issues#8870). -->
+  <Target Name="CollectSuggestedVisualStudioComponentIds" />
+</Project>

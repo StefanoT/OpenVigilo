@@ -1,0 +1,380 @@
+<Window x:Class="Vigilo.App.TrackedMessageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Email"
+        Height="780"
+        Width="1120"
+        MinHeight="640"
+        MinWidth="900"
+        Background="#F5F5F7"
+        FontFamily="Segoe UI Variable, Segoe UI"
+        TextElement.Foreground="#1D1D1F"
+        Icon="Assets/AppIcon.ico"
+        Loaded="Window_Loaded"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True">
+    <Window.Resources>
+        <SolidColorBrush x:Key="CanvasBrush" Color="#F5F5F7" />
+        <SolidColorBrush x:Key="SurfaceBrush" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="PrimaryInkBrush" Color="#1D1D1F" />
+        <SolidColorBrush x:Key="SecondaryInkBrush" Color="#6E6E73" />
+        <SolidColorBrush x:Key="TertiaryInkBrush" Color="#86868B" />
+        <SolidColorBrush x:Key="HairlineBrush" Color="#E2E2E7" />
+        <SolidColorBrush x:Key="ControlBrush" Color="#F2F2F7" />
+        <SolidColorBrush x:Key="ControlHoverBrush" Color="#E9E9EF" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#007AFF" />
+        <SolidColorBrush x:Key="AccentHoverBrush" Color="#006FE6" />
+        <SolidColorBrush x:Key="AccentPressedBrush" Color="#0062CC" />
+        <SolidColorBrush x:Key="AccentTintBrush" Color="#EAF4FF" />
+
+        <Style x:Key="SectionTitle" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="{StaticResource PrimaryInkBrush}" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+
+        <Style x:Key="SupportingText" TargetType="{x:Type TextBlock}">
+            <Setter Property="Foreground" Value="{StaticResource SecondaryInkBrush}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="LineHeight" Value="18" />
+        </Style>
+
+        <Style x:Key="RoundedButton" TargetType="{x:Type Button}">
+            <Setter Property="Foreground" Value="{StaticResource PrimaryInkBrush}" />
+            <Setter Property="Background" Value="{StaticResource ControlBrush}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Height" Value="38" />
+            <Setter Property="Padding" Value="16,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="ButtonBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="9"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}"
+                                              RecognizesAccessKey="True" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.72" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.42" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource ControlHoverBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PrimaryButton" TargetType="{x:Type Button}" BasedOn="{StaticResource RoundedButton}">
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+            <Setter Property="MinWidth" Value="126" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource AccentHoverBrush}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{StaticResource AccentPressedBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ChoiceRadio" TargetType="{x:Type RadioButton}">
+            <Setter Property="Foreground" Value="{StaticResource PrimaryInkBrush}" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="10,9" />
+            <Setter Property="Margin" Value="0,3,0,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <Border x:Name="ChoiceBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid Width="16" Height="16" VerticalAlignment="Center">
+                                    <Ellipse Stroke="#B8B8BD" StrokeThickness="1.5" Fill="White" />
+                                    <Ellipse x:Name="SelectionDot"
+                                             Width="8"
+                                             Height="8"
+                                             Fill="{StaticResource AccentBrush}"
+                                             Visibility="Collapsed" />
+                                </Grid>
+                                <ContentPresenter Grid.Column="1"
+                                                  Margin="7,0,0,0"
+                                                  VerticalAlignment="Center"
+                                                  RecognizesAccessKey="True" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ChoiceBorder" Property="Background" Value="{StaticResource ControlBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="ChoiceBorder" Property="Background" Value="{StaticResource AccentTintBrush}" />
+                                <Setter TargetName="ChoiceBorder" Property="BorderBrush" Value="#B7D9FF" />
+                                <Setter TargetName="SelectionDot" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ChoiceBorder" Property="Opacity" Value="0.4" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="InspectorCard" TargetType="{x:Type Border}">
+            <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource HairlineBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="Padding" Value="16" />
+        </Style>
+    </Window.Resources>
+
+    <Grid x:Name="InteractionPanel" Background="{StaticResource CanvasBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource HairlineBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="30,24,30,22">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="{Binding Subject}"
+                               Margin="0,0,24,0"
+                               FontSize="27"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource PrimaryInkBrush}"
+                               LineHeight="34"
+                               TextTrimming="CharacterEllipsis" />
+                    <TextBlock Margin="0,9,24,0"
+                               Foreground="{StaticResource SecondaryInkBrush}"
+                               FontSize="13"
+                               TextTrimming="CharacterEllipsis">
+                        <Run Text="{Binding SenderName, Mode=OneWay}" FontWeight="SemiBold" />
+                        <Run Text="  ·  " />
+                        <Run Text="{Binding SenderEmail, Mode=OneWay}" />
+                    </TextBlock>
+                    <TextBlock Margin="0,5,24,0"
+                               Foreground="{StaticResource TertiaryInkBrush}"
+                               FontSize="12"
+                               TextTrimming="CharacterEllipsis">
+                        <Run Text="{Binding AccountDisplayName, Mode=OneWay}" />
+                        <Run Text="  /  " />
+                        <Run Text="{Binding Folder, Mode=OneWay}" />
+                        <Run Text="  ·  Received " />
+                        <Run Text="{Binding ReceivedAt, Mode=OneWay}" />
+                    </TextBlock>
+                </StackPanel>
+                <Button x:Name="ReplyButton"
+                        Grid.Column="1"
+                        Content="Reply"
+                        MinWidth="90"
+                        Margin="16,18,0,0"
+                        VerticalAlignment="Top"
+                        Click="Reply_Click"
+                        ToolTip="Open a reply in your default email application"
+                        Style="{StaticResource RoundedButton}" />
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="28,22,28,22">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="282" />
+            </Grid.ColumnDefinitions>
+
+            <Border Background="{StaticResource SurfaceBrush}"
+                    BorderBrush="{StaticResource HairlineBrush}"
+                    BorderThickness="1"
+                    CornerRadius="14"
+                    ClipToBounds="True"
+                    Margin="0,0,20,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Border BorderBrush="{StaticResource HairlineBrush}"
+                            BorderThickness="0,0,0,1"
+                            Padding="18,13">
+                        <TextBlock Text="Original message"
+                                   Style="{StaticResource SectionTitle}" />
+                    </Border>
+                    <Grid Grid.Row="1">
+                        <WebBrowser x:Name="HtmlBodyBrowser"
+                                    Navigating="HtmlBodyBrowser_Navigating"
+                                    Visibility="Collapsed" />
+                        <TextBox x:Name="PlainTextBodyBox"
+                                 AcceptsReturn="True"
+                                 IsReadOnly="True"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 HorizontalScrollBarVisibility="Disabled"
+                                 VerticalContentAlignment="Top"
+                                 BorderThickness="0"
+                                 Padding="20"
+                                 Background="White"
+                                 FontFamily="Segoe UI Variable, Segoe UI"
+                                 FontSize="14"
+                                 TextBlock.LineHeight="21" />
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <ScrollViewer Grid.Column="1"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel>
+                    <Border Style="{StaticResource InspectorCard}">
+                        <StackPanel x:Name="DeadlineEditorPanel">
+                            <TextBlock Text="Follow-up" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="Choose when this message needs your attention."
+                                       Margin="0,4,0,12"
+                                       Style="{StaticResource SupportingText}" />
+                            <DatePicker x:Name="DeadlinePicker"
+                                        Height="36"
+                                        Padding="8,0"
+                                        Background="White"
+                                        BorderBrush="{StaticResource HairlineBrush}"
+                                        SelectedDateChanged="DeadlinePicker_SelectedDateChanged"
+                                        ToolTip="Select the local calendar date for this follow-up" />
+                            <Button Content="Clear date"
+                                    Margin="0,8,0,0"
+                                    HorizontalAlignment="Left"
+                                    Height="30"
+                                    Padding="10,0"
+                                    Click="ClearDeadline_Click"
+                                    Style="{StaticResource RoundedButton}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Margin="0,12,0,0" Style="{StaticResource InspectorCard}">
+                        <StackPanel x:Name="MessageStatusPanel">
+                            <TextBlock Text="Message status" Style="{StaticResource SectionTitle}" />
+                            <TextBlock x:Name="CurrentStatusText"
+                                       Margin="0,4,0,8"
+                                       Style="{StaticResource SupportingText}" />
+                            <RadioButton x:Name="StatusNoChangeRadio"
+                                         GroupName="MessageStatus"
+                                         Content="Keep current status"
+                                         IsChecked="True"
+                                         Checked="StatusNoChange_Checked"
+                                         Style="{StaticResource ChoiceRadio}" />
+                            <RadioButton GroupName="MessageStatus"
+                                         Content="Mark as done"
+                                         Checked="Done_Checked"
+                                         Style="{StaticResource ChoiceRadio}" />
+                            <RadioButton GroupName="MessageStatus"
+                                         Content="Snooze"
+                                         Checked="Snooze_Checked"
+                                         Style="{StaticResource ChoiceRadio}" />
+                            <RadioButton GroupName="MessageStatus"
+                                         Content="Dismiss"
+                                         Checked="Dismiss_Checked"
+                                         Style="{StaticResource ChoiceRadio}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Margin="0,12,0,0" Style="{StaticResource InspectorCard}">
+                        <StackPanel>
+                            <TextBlock Text="Sender rules" Style="{StaticResource SectionTitle}" />
+                            <TextBlock Text="Applies to future email from this address."
+                                       Margin="0,4,0,3"
+                                       Style="{StaticResource SupportingText}" />
+                            <TextBlock x:Name="SenderRuleStatusText"
+                                       Margin="0,0,0,8"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       FontSize="12"
+                                       TextWrapping="Wrap" />
+                            <RadioButton x:Name="SenderNoChangeRadio"
+                                         GroupName="SenderRule"
+                                         Content="No change"
+                                         IsChecked="True"
+                                         Checked="SenderNoChange_Checked"
+                                         Style="{StaticResource ChoiceRadio}" />
+                            <RadioButton x:Name="VipSenderButton"
+                                         GroupName="SenderRule"
+                                         Content="Always flag sender"
+                                         Checked="VipSender_Checked"
+                                         ToolTip="Track all future messages from this address"
+                                         Style="{StaticResource ChoiceRadio}" />
+                            <RadioButton x:Name="IgnoreSenderButton"
+                                         GroupName="SenderRule"
+                                         Content="Ignore future email"
+                                         Checked="IgnoreSender_Checked"
+                                         ToolTip="Discard future messages from this address before local AI classification"
+                                         Style="{StaticResource ChoiceRadio}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <Border Grid.Row="2"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource HairlineBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="28,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="SaveStatusText"
+                           Text="Changes are applied only when you choose Save changes."
+                           VerticalAlignment="Center"
+                           Style="{StaticResource SupportingText}" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Cancel"
+                            MinWidth="92"
+                            Margin="0,0,10,0"
+                            Click="Cancel_Click"
+                            Style="{StaticResource RoundedButton}" />
+                    <Button x:Name="SaveButton"
+                            Content="Save changes"
+                            Click="SaveChanges_Click"
+                            IsDefault="True"
+                            IsEnabled="False"
+                            Style="{StaticResource PrimaryButton}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

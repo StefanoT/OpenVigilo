@@ -1,0 +1,127 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+  <Package Name="Vigilo"
+           Manufacturer="Vigilo"
+           Version="$(var.Version)"
+           UpgradeCode="4B77FA0E-8488-46ED-8363-46AD6DDF44BB"
+           Scope="perUser"
+           InstallerVersion="500"
+           Compressed="yes">
+    <SummaryInformation Description="Vigilo local email triage assistant" Manufacturer="Vigilo" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Vigilo is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="VigiloIcon" SourceFile="$(var.PublishDirectory)\Vigilo.App.exe" />
+    <Binary Id="WixUI_Bmp_Dialog" SourceFile="$(sys.SOURCEFILEDIR)..\..\src\Vigilo.App\Assets\AppIcon.png" />
+    <Binary Id="WixUI_Bmp_Banner" SourceFile="$(sys.SOURCEFILEDIR)..\..\src\Vigilo.App\Assets\AppIcon.png" />
+    <Binary Id="WixUI_Ico_Info" SourceFile="$(sys.SOURCEFILEDIR)..\..\src\Vigilo.App\Assets\AppIcon.ico" />
+    <Binary Id="WixUI_Ico_Exclam" SourceFile="$(sys.SOURCEFILEDIR)..\..\src\Vigilo.App\Assets\AppIcon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="VigiloIcon" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+    <WixVariable Id="WixUICostingPopupOptOut" Value="1" />
+    <Property Id="AUTOSTART">
+      <RegistrySearch Id="ExistingVigiloAutostart"
+                      Root="HKCU"
+                      Key="Software\Microsoft\Windows\CurrentVersion\Run"
+                      Name="Vigilo"
+                      Type="raw" />
+    </Property>
+
+    <!-- Fresh installs default to autostart. On upgrade, AppSearch leaves this
+         empty when the user previously opted out, so the choice is preserved. -->
+    <SetProperty Id="AUTOSTART"
+                 Value="1"
+                 Before="CostFinalize"
+                 Sequence="first"
+                 Condition="NOT Installed AND NOT WIX_UPGRADE_DETECTED AND NOT AUTOSTART" />
+
+    <StandardDirectory Id="LocalAppDataFolder">
+      <Directory Id="INSTALLFOLDER" Name="Programs\Vigilo" ComponentGuidGenerationSeed="E53779F2-93D0-4F5C-9711-F7108F923389">
+        <Component Id="AutostartComponent" Guid="F7584483-3581-4E77-A7A4-5A798C1BC5AA" Condition="AUTOSTART = 1">
+          <RegistryValue Root="HKCU"
+                         Key="Software\Microsoft\Windows\CurrentVersion\Run"
+                         Name="Vigilo"
+                         Type="string"
+                         Value="&quot;[INSTALLFOLDER]Vigilo.App.exe&quot; --background"
+                         KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="VigiloProgramMenuFolder" Name="Vigilo">
+        <Component Id="StartMenuShortcutComponent" Guid="71D40E14-E2AC-4A1E-942B-C6F38E13E407">
+          <Shortcut Id="VigiloStartMenuShortcut"
+                    Name="Vigilo"
+                    Description="Vigilo local email triage assistant"
+                    Target="[INSTALLFOLDER]Vigilo.App.exe"
+                    WorkingDirectory="INSTALLFOLDER"
+                    Icon="VigiloIcon" />
+          <RemoveFolder Id="RemoveVigiloProgramMenuFolder" On="uninstall" />
+          <RegistryValue Root="HKCU"
+                         Key="Software\Vigilo\Installer"
+                         Name="StartMenuShortcut"
+                         Type="integer"
+                         Value="1"
+                         KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <Feature Id="MainFeature" Title="Vigilo" Level="1">
+      <Files Include="$(var.PublishDirectory)\**" Directory="INSTALLFOLDER" />
+      <ComponentRef Id="AutostartComponent" />
+      <ComponentRef Id="StartMenuShortcutComponent" />
+    </Feature>
+
+    <ui:WixUI Id="WixUI_Common" />
+    <UI>
+      <TextStyle Id="WixUI_Font_Normal" FaceName="Tahoma" Size="8" />
+      <TextStyle Id="WixUI_Font_Bigger" FaceName="Tahoma" Size="12" />
+      <TextStyle Id="WixUI_Font_Title" FaceName="Tahoma" Size="9" Bold="yes" />
+      <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+
+      <DialogRef Id="ErrorDlg" />
+      <DialogRef Id="FatalError" />
+      <DialogRef Id="FilesInUse" />
+      <DialogRef Id="MsiRMFilesInUse" />
+      <DialogRef Id="PrepareDlg" />
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ResumeDlg" />
+      <DialogRef Id="UserExit" />
+      <DialogRef Id="WelcomeDlg" />
+      <DialogRef Id="VerifyReadyDlg" />
+      <DialogRef Id="MaintenanceWelcomeDlg" />
+      <DialogRef Id="MaintenanceTypeDlg" />
+      <DialogRef Id="ExitDialog" />
+
+      <Dialog Id="AutostartDlg" Width="370" Height="270" Title="Vigilo Setup">
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="340" Height="18" Transparent="yes" NoPrefix="yes" Text="Startup options" />
+        <Control Id="Description" Type="Text" X="25" Y="45" Width="320" Height="30" Text="Choose whether Vigilo should monitor email whenever you sign in." />
+        <Control Id="AutostartCheckBox" Type="CheckBox" X="25" Y="90" Width="320" Height="30"
+                 Property="AUTOSTART" CheckBoxValue="1"
+                 Text="Start Vigilo automatically when I sign in to Windows" />
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="Back">
+          <Publish Event="NewDialog" Value="WelcomeDlg" />
+        </Control>
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="Next">
+          <Publish Event="NewDialog" Value="VerifyReadyDlg" />
+        </Control>
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="Cancel">
+          <Publish Event="SpawnDialog" Value="CancelDlg" />
+        </Control>
+      </Dialog>
+
+      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999" />
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="AutostartDlg" Condition="NOT Installed" />
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Condition="Installed AND PATCH" />
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="AutostartDlg" Order="1" Condition="NOT Installed" />
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2" Condition="Installed AND NOT PATCH" />
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="3" Condition="Installed AND PATCH" />
+      <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg" />
+      <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg" />
+      <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg" />
+      <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg" />
+    </UI>
+  </Package>
+</Wix>

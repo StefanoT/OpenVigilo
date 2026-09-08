@@ -1,0 +1,708 @@
+<Window x:Class="Vigilo.App.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Vigilo settings"
+        Width="960"
+        Height="760"
+        MinWidth="760"
+        MinHeight="620"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Background="#F4F7FA"
+        FontFamily="Segoe UI Variable, Segoe UI"
+        TextElement.Foreground="#111827"
+        Icon="Assets/AppIcon.ico"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True">
+    <Window.Resources>
+        <SolidColorBrush x:Key="PanelSurface" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="PanelSurfaceAlt" Color="#F8FAFC" />
+        <SolidColorBrush x:Key="HeaderInk" Color="#0B1220" />
+        <SolidColorBrush x:Key="MutedInk" Color="#64748B" />
+        <SolidColorBrush x:Key="BorderSoft" Color="#D9E2EC" />
+        <SolidColorBrush x:Key="BorderStrong" Color="#C7D2DF" />
+        <SolidColorBrush x:Key="Accent" Color="#0F766E" />
+        <SolidColorBrush x:Key="AccentHover" Color="#0D9488" />
+        <SolidColorBrush x:Key="AccentSoft" Color="#E6F5F3" />
+        <SolidColorBrush x:Key="Danger" Color="#B42318" />
+        <SolidColorBrush x:Key="DangerSoft" Color="#FFF7F6" />
+
+        <Style x:Key="PageTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="24" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource HeaderInk}" />
+            <Setter Property="LineHeight" Value="30" />
+        </Style>
+
+        <Style x:Key="PageDescription" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{StaticResource MutedInk}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,4,0,0" />
+        </Style>
+
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource HeaderInk}" />
+            <Setter Property="Margin" Value="0,0,0,4" />
+        </Style>
+
+        <Style x:Key="SectionDescription" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{StaticResource MutedInk}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,0,0,16" />
+        </Style>
+
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{StaticResource MutedInk}" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
+
+        <Style x:Key="HelperText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{StaticResource MutedInk}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="0,6,0,0" />
+        </Style>
+
+        <Style x:Key="Section" TargetType="Border">
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSoft}" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+            <Setter Property="Padding" Value="0,0,0,24" />
+            <Setter Property="Margin" Value="0,0,0,24" />
+        </Style>
+
+        <Style x:Key="DangerZone" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource DangerSoft}" />
+            <Setter Property="BorderBrush" Value="#F2C2BD" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="38" />
+            <Setter Property="Padding" Value="11,0" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSoft}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style TargetType="PasswordBox">
+            <Setter Property="Height" Value="38" />
+            <Setter Property="Padding" Value="11,0" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderSoft}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Height" Value="38" />
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style TargetType="CheckBox">
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{StaticResource HeaderInk}" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderStrong}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Foreground" Value="{StaticResource HeaderInk}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="MinHeight" Value="34" />
+            <Setter Property="Padding" Value="14,6" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="{StaticResource Accent}" />
+            <Setter Property="BorderBrush" Value="{StaticResource Accent}" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+        <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#E9A6A0" />
+            <Setter Property="Foreground" Value="{StaticResource Danger}" />
+        </Style>
+
+        <Style x:Key="SettingsNavigationItem" TargetType="ListBoxItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Foreground" Value="{StaticResource HeaderInk}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,4" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="NavigationItem"
+                                Padding="14,11"
+                                CornerRadius="7"
+                                Background="Transparent">
+                            <ContentPresenter />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="NavigationItem" Property="Background" Value="#EEF2F7" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="NavigationItem" Property="Background" Value="{StaticResource AccentSoft}" />
+                                <Setter Property="Foreground" Value="{StaticResource Accent}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="NavigationItem" Property="BorderBrush" Value="{StaticResource Accent}" />
+                                <Setter TargetName="NavigationItem" Property="BorderThickness" Value="1" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Background="{StaticResource PanelSurface}"
+                BorderBrush="{StaticResource BorderSoft}"
+                BorderThickness="0,0,0,1"
+                Padding="28,22">
+            <StackPanel>
+                <TextBlock Text="Settings" Style="{StaticResource PageTitle}" />
+                <TextBlock Text="Manage email accounts, monitoring behavior, and the local AI model."
+                           Style="{StaticResource PageDescription}" />
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="196" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Background="{StaticResource PanelSurfaceAlt}"
+                    BorderBrush="{StaticResource BorderSoft}"
+                    BorderThickness="0,0,1,0"
+                    Padding="16,24">
+                <ListBox x:Name="SettingsNavigation"
+                         SelectedIndex="0"
+                         ItemContainerStyle="{StaticResource SettingsNavigationItem}"
+                         HorizontalContentAlignment="Stretch"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         AutomationProperties.Name="Settings categories">
+                    <ListBoxItem Content="Accounts" />
+                    <ListBoxItem Content="Monitoring &amp; data" />
+                    <ListBoxItem Content="Local AI" />
+                    <ListBoxItem Content="Classic Outlook" />
+                    <ListBoxItem Content="Sender rules" />
+                </ListBox>
+            </Border>
+
+            <Grid Grid.Column="1">
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              HorizontalAlignment="Stretch">
+                    <ScrollViewer.Style>
+                        <Style TargetType="ScrollViewer">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=SettingsNavigation}" Value="0">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ScrollViewer.Style>
+                    <StackPanel Margin="32,28" MaxWidth="760">
+                        <TextBlock Text="Email accounts" Style="{StaticResource PageTitle}" />
+                        <TextBlock Text="Choose an account, update its identity, and configure how Vigilo connects to its mailbox."
+                                   Style="{StaticResource PageDescription}"
+                                   Margin="0,4,0,24" />
+
+                        <Border Style="{StaticResource Section}">
+                            <StackPanel>
+                                <TextBlock Text="Selected account" Style="{StaticResource SectionTitle}" />
+                                <TextBlock Text="Switch accounts here instead of navigating a permanent account list."
+                                           Style="{StaticResource SectionDescription}" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox ItemsSource="{Binding Accounts}"
+                                              SelectedItem="{Binding Account, Mode=TwoWay}"
+                                              SelectionChanged="AccountSelector_SelectionChanged"
+                                              DisplayMemberPath="DisplayName"
+                                              AutomationProperties.Name="Selected email account" />
+                                    <Button Grid.Column="1"
+                                            Content="Add account"
+                                            Command="{Binding AddAccountCommand}"
+                                            Margin="12,0,0,0"
+                                            AutomationProperties.HelpText="Create a new email account configuration" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Section}">
+                            <StackPanel>
+                                <TextBlock Text="Account" Style="{StaticResource SectionTitle}" />
+                                <TextBlock Text="The address Vigilo monitors and the credentials used to sign in."
+                                           Style="{StaticResource SectionDescription}" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="16" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="16" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel>
+                                        <TextBlock Text="Provider" Style="{StaticResource FieldLabel}" />
+                                        <ComboBox ItemsSource="{Binding AccountPresets}"
+                                                  SelectedItem="{Binding SelectedImapPreset}"
+                                                  DisplayMemberPath="Name"
+                                                  AutomationProperties.Name="Email provider" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="Account name" Style="{StaticResource FieldLabel}" />
+                                        <TextBox Text="{Binding AccountName, UpdateSourceTrigger=PropertyChanged}"
+                                                 AutomationProperties.Name="Account name" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="2">
+                                        <TextBlock Text="Email address" Style="{StaticResource FieldLabel}" />
+                                        <TextBox Text="{Binding AccountEmailAddress, UpdateSourceTrigger=PropertyChanged}"
+                                                 AutomationProperties.Name="Email address" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="2" Grid.Column="2">
+                                        <TextBlock Text="IMAP username" Style="{StaticResource FieldLabel}" />
+                                        <TextBox Text="{Binding AccountUsername, UpdateSourceTrigger=PropertyChanged}"
+                                                 AutomationProperties.Name="IMAP username" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Row="4">
+                                        <TextBlock Text="New app password" Style="{StaticResource FieldLabel}" />
+                                        <PasswordBox x:Name="AppPasswordBox"
+                                                     AutomationProperties.Name="New app password" />
+                                        <TextBlock Text="{Binding PasswordStatus}" Style="{StaticResource HelperText}" />
+                                    </StackPanel>
+                                    <CheckBox Grid.Row="4"
+                                              Grid.Column="2"
+                                              Content="Show desktop notifications for this account"
+                                              IsChecked="{Binding Account.NotificationsEnabled}"
+                                              VerticalAlignment="Top"
+                                              Margin="0,25,0,0" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Section}">
+                            <StackPanel>
+                                <TextBlock Text="Connection" Style="{StaticResource SectionTitle}" />
+                                <TextBlock Text="Server details are filled automatically for known providers."
+                                           Style="{StaticResource SectionDescription}" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="150" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="IMAP server" Style="{StaticResource FieldLabel}" />
+                                        <TextBox Text="{Binding Account.ImapHost, UpdateSourceTrigger=PropertyChanged}"
+                                                 AutomationProperties.Name="IMAP server" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="Port" Style="{StaticResource FieldLabel}" />
+                                        <TextBox Text="{Binding Account.ImapPort, UpdateSourceTrigger=PropertyChanged}"
+                                                 AutomationProperties.Name="IMAP port" />
+                                    </StackPanel>
+                                </Grid>
+
+                                <Expander Header="Advanced connection options"
+                                          Margin="0,18,0,0"
+                                          FontWeight="SemiBold">
+                                    <Grid Margin="0,16,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="20" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="16" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="Folders to monitor" Style="{StaticResource FieldLabel}" />
+                                            <TextBox Text="{Binding Account.FoldersToMonitor, UpdateSourceTrigger=PropertyChanged}"
+                                                     AutomationProperties.Name="Folders to monitor" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="Sent folders" Style="{StaticResource FieldLabel}" />
+                                            <TextBox Text="{Binding Account.SentFoldersToMonitor, UpdateSourceTrigger=PropertyChanged}"
+                                                     AutomationProperties.Name="Sent folders" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Row="2" Grid.ColumnSpan="3" Orientation="Horizontal">
+                                            <CheckBox Content="Use SSL"
+                                                      IsChecked="{Binding Account.UseSsl}"
+                                                      Margin="0,0,24,0" />
+                                            <CheckBox Content="Use IMAP IDLE"
+                                                      IsChecked="{Binding Account.UseImapIdle}" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Expander>
+
+                                <Grid Margin="0,20,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Use a manual scan to verify the selected account after saving its credentials."
+                                               Style="{StaticResource HelperText}"
+                                               VerticalAlignment="Center"
+                                               Margin="0" />
+                                    <Button Grid.Column="1"
+                                            Content="Run scan now"
+                                            Command="{Binding RunScanCommand}"
+                                            Margin="16,0,0,0" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource DangerZone}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Delete account"
+                                               FontWeight="SemiBold"
+                                               Foreground="{StaticResource Danger}" />
+                                    <TextBlock Text="Remove this account and its locally stored messages from Vigilo."
+                                               Style="{StaticResource HelperText}" />
+                                </StackPanel>
+                                <Button Grid.Column="1"
+                                        Content="Delete account"
+                                        Command="{Binding DeleteAccountCommand}"
+                                        Style="{StaticResource DangerButton}"
+                                        Margin="20,0,0,0"
+                                        VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              HorizontalAlignment="Stretch">
+                    <ScrollViewer.Style>
+                        <Style TargetType="ScrollViewer">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=SettingsNavigation}" Value="1">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ScrollViewer.Style>
+                    <StackPanel Margin="32,28" MaxWidth="760">
+                        <TextBlock Text="Monitoring &amp; data" Style="{StaticResource PageTitle}" />
+                        <TextBlock Text="Control mailbox polling, retention, and one-off maintenance actions for the selected account."
+                                   Style="{StaticResource PageDescription}"
+                                   Margin="0,4,0,24" />
+
+                        <Border Style="{StaticResource Section}">
+                            <StackPanel>
+                                <TextBlock Text="Schedule and retention" Style="{StaticResource SectionTitle}" />
+                                <TextBlock Text="IMAP IDLE remains the primary update mechanism; polling is the fallback interval."
+                                           Style="{StaticResource SectionDescription}" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220" />
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="220" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="Polling interval (minutes)" Style="{StaticResource FieldLabel}" />
+                                        <TextBox Text="{Binding Account.PollingFallbackMinutes, UpdateSourceTrigger=PropertyChanged}"
+                                                 AutomationProperties.Name="Polling interval in minutes" />
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2">
+                                        <TextBlock Text="Data retention (days)" Style="{StaticResource FieldLabel}" />
+                                        <TextBox Text="{Binding Account.DataRetentionDays, UpdateSourceTrigger=PropertyChanged}"
+                                                 AutomationProperties.Name="Data retention in days" />
+                                    </StackPanel>
+                                </Grid>
+                                <Button Content="Apply retention now"
+                                        Command="{Binding ApplyRetentionCommand}"
+                                        HorizontalAlignment="Left"
+                                        Margin="0,18,0,0" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource DangerZone}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="Delete all local data"
+                                               FontWeight="SemiBold"
+                                               Foreground="{StaticResource Danger}" />
+                                    <TextBlock Text="Erase locally retained messages and tracking data for every configured account."
+                                               Style="{StaticResource HelperText}" />
+                                </StackPanel>
+                                <Button Grid.Column="1"
+                                        Content="Delete local data"
+                                        Command="{Binding DeleteAllLocalDataCommand}"
+                                        Style="{StaticResource DangerButton}"
+                                        Margin="20,0,0,0"
+                                        VerticalAlignment="Center" />
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              HorizontalAlignment="Stretch">
+                    <ScrollViewer.Style>
+                        <Style TargetType="ScrollViewer">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=SettingsNavigation}" Value="2">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ScrollViewer.Style>
+                    <StackPanel Margin="32,28" MaxWidth="760">
+                        <TextBlock Text="Local AI" Style="{StaticResource PageTitle}" />
+                        <TextBlock Text="Choose the model Vigilo uses to classify messages on this computer."
+                                   Style="{StaticResource PageDescription}"
+                                   Margin="0,4,0,24" />
+
+                        <Border Style="{StaticResource Section}">
+                            <StackPanel>
+                                <TextBlock Text="Model profile" Style="{StaticResource SectionTitle}" />
+                                <TextBlock Text="Select a profile that matches the memory and performance available on this device."
+                                           Style="{StaticResource SectionDescription}" />
+                                <TextBlock Text="Model" Style="{StaticResource FieldLabel}" />
+                                <ComboBox ItemsSource="{Binding ModelProfiles}"
+                                          SelectedItem="{Binding SelectedModelProfile, Mode=TwoWay}"
+                                          DisplayMemberPath="DisplayName"
+                                          MaxWidth="440"
+                                          HorizontalAlignment="Stretch"
+                                          AutomationProperties.Name="Local AI model profile" />
+                                <TextBlock Text="{Binding ModelStatus}"
+                                           Style="{StaticResource HelperText}"
+                                           Margin="0,12,0,0" />
+                                <TextBlock Style="{StaticResource HelperText}"
+                                           Margin="0,8,0,0">
+                                    <Run Text="Model folder: " />
+                                    <Hyperlink Command="{Binding OpenModelPathCommand}"
+                                               AutomationProperties.Name="Open model folder">
+                                        <Run Text="{Binding ModelPath, Mode=OneWay}" />
+                                    </Hyperlink>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="Model files" Style="{StaticResource SectionTitle}" />
+                                <TextBlock Text="Download a missing model or repair an incomplete local installation."
+                                           Style="{StaticResource SectionDescription}"
+                                           Margin="0,0,20,0" />
+                            </StackPanel>
+                            <Button Grid.Column="1"
+                                    Content="Download or repair model"
+                                    Command="{Binding EnsureModelCommand}"
+                                    Style="{StaticResource PrimaryButton}"
+                                    VerticalAlignment="Center" />
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              HorizontalAlignment="Stretch">
+                    <ScrollViewer.Style>
+                        <Style TargetType="ScrollViewer">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=SettingsNavigation}" Value="3">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ScrollViewer.Style>
+                    <StackPanel Margin="32,28" MaxWidth="760">
+                        <TextBlock Text="Classic Outlook category tagging" Style="{StaticResource PageTitle}" />
+                        <TextBlock Text="Optional, local-only tagging for Classic Outlook for Windows. New Outlook, Outlook on the web, Microsoft Graph, macOS, and mobile are not supported. Vigilo only changes categories; it never moves mail or creates Outlook rules."
+                                   Style="{StaticResource PageDescription}" Margin="0,4,0,24" />
+
+                        <Border Style="{StaticResource Section}">
+                            <StackPanel>
+                                <TextBlock Text="Connection" Style="{StaticResource SectionTitle}" />
+                                <TextBlock Text="Vigilo email account" Style="{StaticResource FieldLabel}" />
+                                <ComboBox ItemsSource="{Binding Accounts}"
+                                          SelectedItem="{Binding OutlookMailbox, Mode=TwoWay}"
+                                          DisplayMemberPath="DisplayName"
+                                          AutomationProperties.Name="Vigilo mailbox for Classic Outlook tagging" />
+                                <TextBlock Text="Choose the Vigilo mailbox that corresponds to the Outlook store below."
+                                           Style="{StaticResource HelperText}" />
+                                <CheckBox Content="Enable Outlook category tagging"
+                                          IsChecked="{Binding OutlookEnabled}" Margin="0,18,0,16" />
+                                <TextBlock Text="Outlook store" Style="{StaticResource FieldLabel}" />
+                                <ComboBox ItemsSource="{Binding OutlookStores}"
+                                          SelectedItem="{Binding SelectedOutlookStore, Mode=TwoWay}"
+                                          DisplayMemberPath="DisplayName"
+                                          AutomationProperties.Name="Classic Outlook store" />
+                                <Grid Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock><Run Text="Status: " /><Run Text="{Binding OutlookStatus, Mode=OneWay}" /></TextBlock>
+                                        <TextBlock Style="{StaticResource HelperText}" Margin="0,4,0,0"><Run Text="Version: " /><Run Text="{Binding OutlookVersion, Mode=OneWay}" /></TextBlock>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Content="Test connection" Command="{Binding TestOutlookCommand}" />
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Section}">
+                            <StackPanel>
+                                <TextBlock Text="Synchronization" Style="{StaticResource SectionTitle}" />
+                                <TextBlock Text="Outlook uses the exact same single classification shown for the message in Vigilo. Unrelated Outlook categories are preserved."
+                                           Style="{StaticResource SectionDescription}" />
+                                <TextBlock><Run Text="Pending: " /><Run Text="{Binding OutlookPendingCount, Mode=OneWay}" /></TextBlock>
+                                <TextBlock Margin="0,6,0,0"><Run Text="Last successful synchronization: " /><Run Text="{Binding OutlookLastSuccess, Mode=OneWay}" /></TextBlock>
+                                <TextBlock Margin="0,6,0,0" TextWrapping="Wrap"><Run Text="Last error: " /><Run Text="{Binding OutlookLastError, Mode=OneWay}" /></TextBlock>
+                                <WrapPanel Margin="0,16,0,0">
+                                    <Button Content="Create or repair categories" Command="{Binding RepairOutlookCategoriesCommand}" Margin="0,0,10,10" />
+                                    <Button Content="Synchronize currently tracked messages" Command="{Binding SynchronizeOutlookCommand}" Margin="0,0,10,10" />
+                                    <Button Content="Export diagnostics" Command="{Binding ExportOutlookDiagnosticsCommand}" Margin="0,0,0,10" />
+                                </WrapPanel>
+                                <TextBlock Text="Managed categories: Due today, Waiting for my reply, Needs review, Upcoming, Commercial offers, Snoozed, Dismissed, Done. Manual removal of one of these categories may be reversed on the next synchronization."
+                                           Style="{StaticResource HelperText}" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled"
+                              HorizontalAlignment="Stretch">
+                    <ScrollViewer.Style>
+                        <Style TargetType="ScrollViewer">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SelectedIndex, ElementName=SettingsNavigation}" Value="4">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ScrollViewer.Style>
+                    <StackPanel Margin="32,28" MaxWidth="760">
+                        <TextBlock Text="Sender rules" Style="{StaticResource PageTitle}" />
+                        <TextBlock Text="VIP senders are always tracked after classification. Ignored senders are discarded before the local AI model runs. Rules apply only to the mailbox where they were created, and ignored takes precedence when a rule is changed."
+                                   Style="{StaticResource PageDescription}"
+                                   Margin="0,4,0,24" />
+
+                        <Border Style="{StaticResource Section}">
+                            <StackPanel>
+                                <TextBlock Text="Configured senders" Style="{StaticResource SectionTitle}" />
+                                <TextBlock Text="Add a rule from any tracked message. Select a rule here to remove it; removing an ignored rule affects future messages only."
+                                           Style="{StaticResource SectionDescription}" />
+                                <ListView ItemsSource="{Binding SenderRules}"
+                                          SelectedItem="{Binding SelectedSenderRule, Mode=TwoWay}"
+                                          MinHeight="180"
+                                          AutomationProperties.Name="Configured sender rules">
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="Rule" Width="90" DisplayMemberBinding="{Binding KindDisplayName}" />
+                                            <GridViewColumn Header="Sender" Width="280" DisplayMemberBinding="{Binding SenderEmail}" />
+                                            <GridViewColumn Header="Mailbox" Width="220" DisplayMemberBinding="{Binding AccountDisplayName}" />
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                                <Button Content="Remove selected rule"
+                                        Command="{Binding RemoveSenderRuleCommand}"
+                                        CommandParameter="{Binding SelectedSenderRule}"
+                                        HorizontalAlignment="Left"
+                                        Margin="0,16,0,0" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <Border Grid.Row="2"
+                Background="{StaticResource PanelSurface}"
+                BorderBrush="{StaticResource BorderSoft}"
+                BorderThickness="0,1,0,0"
+                Padding="20,14">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding StatusText}"
+                           Foreground="{StaticResource MutedInk}"
+                           FontSize="12"
+                           TextWrapping="Wrap"
+                           VerticalAlignment="Center"
+                           Margin="0,0,20,0" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Close"
+                            Click="Close_Click"
+                            IsCancel="True"
+                            MinWidth="86" />
+                    <Button Content="Save changes"
+                            Click="SaveSettings_Click"
+                            Style="{StaticResource PrimaryButton}"
+                            MinWidth="124"
+                            Margin="10,0,0,0"
+                            IsDefault="True" />
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

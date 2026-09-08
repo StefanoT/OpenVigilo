@@ -1,0 +1,44 @@
+name: .NET Desktop CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    name: Build and test (${{ matrix.configuration }})
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [Debug, Release]
+
+    env:
+      Solution_Name: Vigilo.sln
+      App_Project_Path: src\Vigilo.App\Vigilo.App.csproj
+      Test_Project_Path: src\Vigilo.Tests\Vigilo.Tests.csproj
+      Configuration: ${{ matrix.configuration }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+
+    - name: Restore
+      shell: pwsh
+      run: |
+        dotnet restore $env:App_Project_Path --locked-mode
+        dotnet restore $env:Test_Project_Path --locked-mode
+
+    - name: Build
+      run: dotnet build $env:Solution_Name --configuration $env:Configuration --no-restore
+
+    - name: Test
+      run: dotnet test $env:Test_Project_Path --configuration $env:Configuration --no-build --verbosity normal
